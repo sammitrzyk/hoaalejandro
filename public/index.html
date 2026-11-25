@@ -310,9 +310,9 @@ footer .wrap{display:flex;flex-direction:column;align-items:center}
           </div>
         </div>
 
-        <!-- Google review: identical for every visitor, regardless of rating -->
+        <!-- Google review: shown only after a 4-5 star submission -->
         <div class="gr" id="google-review" hidden>
-          <p>Want to share your experience publicly?</p>
+          <p>We’re so glad to hear that! Please take a moment to leave us a review on Google too — it means a lot to our team.</p>
           <a class="ghost" id="google-link" href="#" target="_blank" rel="noopener noreferrer">
             Leave a Google Review
             <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
@@ -375,7 +375,7 @@ footer .wrap{display:flex;flex-direction:column;align-items:center}
   }
   var gr = $("#google-review"), gl = $("#google-link");
   if (C.googleReviewUrl && /^https:\/\//.test(C.googleReviewUrl)) {
-    gl.href = C.googleReviewUrl; gr.hidden = false;
+    gl.href = C.googleReviewUrl;
     gl.addEventListener("click", function () { track("google_review_click", { rating: rating || null }); });
   }
 
@@ -496,7 +496,7 @@ footer .wrap{display:flex;flex-direction:column;align-items:center}
     $("#fb-prompt").textContent = low ? "Tell us what we could improve." : "Anything you’d like to share with our team? (optional)";
     $("#fb-contact-row").hidden = !low;
     $("#fb-err").textContent = "";
-    fbThanks.hidden = true; fbForm.hidden = false;
+    fbThanks.hidden = true; gr.hidden = true; fbForm.hidden = false;
   }
 
   var fbSending = false;
@@ -513,10 +513,12 @@ footer .wrap{display:flex;flex-direction:column;align-items:center}
     }).then(function (res) {
       if (!res._ok) throw new Error(res.error || "failed");
       track("private_feedback_submit", { rating: rating });
-      $("#fb-thanks-text").textContent = rating <= 3
-        ? "Thank you for sharing your feedback. We appreciate the opportunity to improve."
-        : "Thank you! Your note went straight to our team.";
+      var isHigh = rating >= 4;
+      $("#fb-thanks-text").textContent = isHigh
+        ? "Thank you! Your note went straight to our team."
+        : "Thanks, your feedback was submitted.";
       fbForm.reset(); fbForm.hidden = true; fbThanks.hidden = false;
+      if (isHigh && C.googleReviewUrl && /^https:\/\//.test(C.googleReviewUrl)) gr.hidden = false;
     }).catch(function () {
       $("#fb-err").textContent = "Sorry — that didn’t send. Please try again.";
     }).then(function () { fbSending = false; setLoading(fbBtn, false); });

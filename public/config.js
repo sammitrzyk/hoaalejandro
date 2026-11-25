@@ -6,7 +6,7 @@
 window.SITE_CONFIG = {
   // Paste the Google "Ask for reviews" link from your Google Business Profile.
   // e.g. "https://g.page/r/XXXXXXXXXXXX/review". Leave "" until you have it.
-  googleReviewUrl: "",
+  googleReviewUrl: "https://g.page/r/CUYWRiZEfWTsEAE/review",
 
   // Snow removal price and the line under it (edit if billing differs).
   snowPrice: "$60",
