@@ -140,8 +140,11 @@ legend{padding:0;margin-bottom:8px}
 .thanks{margin-top:22px;padding:18px;border-radius:14px;background:var(--mist);display:flex;align-items:center;gap:12px;text-align:left}
 .thanks p{margin:0;font-size:14.5px}
 .mini-check{flex:none;width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center}
-.gr{margin-top:24px;padding-top:22px;border-top:1px solid #EDF0EB;display:flex;flex-direction:column;align-items:center;gap:12px}
-.gr p{margin:0;font-size:13.5px;color:var(--muted)}
+.gr{margin-top:22px;padding:30px 24px;border-radius:16px;background:linear-gradient(180deg,#EAF2EC,#F3F7F1);border:1px solid #D8E5DA;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.gr .mini-check{width:40px;height:40px;margin-bottom:4px}
+.gr h3{font:800 21px/1.25 var(--head);color:var(--green);margin:0}
+.gr p{margin:0;font-size:14.5px;color:var(--ink-2);max-width:380px}
+.gr .btn{width:auto;height:50px;padding:0 30px;margin-top:8px}
 
 /* Footer */
 footer{background:var(--green);color:#fff;padding:48px 0 32px;text-align:center}
@@ -310,10 +313,12 @@ footer .wrap{display:flex;flex-direction:column;align-items:center}
           </div>
         </div>
 
-        <!-- Google review: shown only after a 4-5 star submission -->
-        <div class="gr" id="google-review" hidden>
-          <p>We’re so glad to hear that! Please take a moment to leave us a review on Google too — it means a lot to our team.</p>
-          <a class="ghost" id="google-link" href="#" target="_blank" rel="noopener noreferrer">
+        <!-- Google review: shown only after a 4-5 star submission, in place of the generic thanks message -->
+        <div class="gr fade" id="google-review" role="status" hidden>
+          <span class="mini-check" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <h3>Thank You for the Great Rating!</h3>
+          <p>Would you take 30 seconds to share it on Google too? It means a lot to our small business.</p>
+          <a class="btn" id="google-link" href="#" target="_blank" rel="noopener noreferrer">
             Leave a Google Review
             <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
             <span class="sr">(opens in a new tab)</span>
@@ -513,12 +518,14 @@ footer .wrap{display:flex;flex-direction:column;align-items:center}
     }).then(function (res) {
       if (!res._ok) throw new Error(res.error || "failed");
       track("private_feedback_submit", { rating: rating });
-      var isHigh = rating >= 4;
-      $("#fb-thanks-text").textContent = isHigh
-        ? "Thank you! Your note went straight to our team."
-        : "Thanks, your feedback was submitted.";
-      fbForm.reset(); fbForm.hidden = true; fbThanks.hidden = false;
-      if (isHigh && C.googleReviewUrl && /^https:\/\//.test(C.googleReviewUrl)) gr.hidden = false;
+      var isHigh = rating >= 4 && C.googleReviewUrl && /^https:\/\//.test(C.googleReviewUrl);
+      fbForm.reset(); fbForm.hidden = true;
+      if (isHigh) {
+        gr.hidden = false;
+      } else {
+        $("#fb-thanks-text").textContent = "Thanks, your feedback was submitted.";
+        fbThanks.hidden = false;
+      }
     }).catch(function () {
       $("#fb-err").textContent = "Sorry — that didn’t send. Please try again.";
     }).then(function () { fbSending = false; setLoading(fbBtn, false); });
