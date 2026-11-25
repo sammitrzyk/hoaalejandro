@@ -1,0 +1,10 @@
+{
+  "name": "alejandros-hoa-landing",
+  "version": "1.0.0",
+  "private": true,
+  "description": "HOA door-hanger landing page for Alejandro's Landscaping & Construction",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}
